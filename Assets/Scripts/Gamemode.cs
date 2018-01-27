@@ -13,6 +13,8 @@ public class Gamemode : MonoBehaviour
     float speed; //change according to ship when we introduce types of ship?
     [SerializeField]
     GameObject shipPrefab;
+    [SerializeField]
+    GameObject lighthousePrefab;
 
     //Spawn points for ships
     [SerializeField]
@@ -37,6 +39,7 @@ public class Gamemode : MonoBehaviour
         speed = 1;
         score = 0;
         isPlaying = true;
+        SpawnLighthouse();
         SpawnShipEater();
         SpawnShip(Spawn1);
     }
@@ -47,14 +50,20 @@ public class Gamemode : MonoBehaviour
 
     }
 
+    void SpawnLighthouse()
+    {
+        GameObject lightHouse = (GameObject)Instantiate(lighthousePrefab, new Vector3(-2.7f, 2.2f, 4.5f), transform.rotation);
+        lightHouse.transform.Rotate(new Vector3(-1, 0, 1));
+    }
+
     void SpawnShipEater()
     {
         //CapsuleCollider ShipEaterClone = new CapsuleCollider();
-        GameObject ShipEater = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        GameObject ShipEater = GameObject.CreatePrimitive(PrimitiveType.Cube);
         ShipEater.name = "ShipEater";
-        ShipEater.transform.position = new Vector3(0, 5, -1);
-        ShipEater.GetComponent<CapsuleCollider>().height = 15;
-        ShipEater.GetComponent<CapsuleCollider>().radius = 2.5f;
+        ShipEater.transform.position = new Vector3(-1.35f, 2, 2.4f);
+        ShipEater.GetComponent<BoxCollider>().size = new Vector3(12.2f, 8, 13);
+        ShipEater.GetComponent<BoxCollider>().isTrigger = true;
         Destroy(ShipEater.GetComponent<MeshFilter>());
         
     }
