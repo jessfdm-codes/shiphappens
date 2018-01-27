@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4047935856611368}
   - component: {fileID: 136085348288787336}
+  - component: {fileID: 114325489028507446}
   m_Layer: 0
   m_Name: Tugboat
   m_TagString: Untagged
@@ -112,6 +113,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1844528062099590}
   m_Mesh: {fileID: 4300000, guid: dd02308c08035684fbd4f1b5b9d62d4e, type: 3}
+--- !u!114 &114325489028507446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1307879267631516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d0b97c477b0c3643b05de2e3adad5d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &136085348288787336
 CapsuleCollider:
   m_ObjectHideFlags: 1
