@@ -5,13 +5,10 @@ using UnityEngine;
 public class ShipAI : MonoBehaviour
 {
 
-    bool solved;
+    bool solved, rotated;
     int difficulty;
     float speed;
     List<int> flagsRequired;
-    Transform destination;
-    Transform lighthouse;
-    Transform exit;
     GameObject shipEater;
 
     // Use this for initialization
@@ -20,45 +17,46 @@ public class ShipAI : MonoBehaviour
         flagsRequired = new List<int>();
         flagsRequired.Add(1);
         solved = false;
+        rotated = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float step = speed * Time.deltaTime;
-
-        //make sure the boat is looking at the destination
-        if (Vector3.Dot((destination.position - transform.position).normalized, transform.forward) < 0.9) {
-            Vector3 targetDir = destination.position - transform.position;
-            Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
-            transform.rotation = Quaternion.LookRotation(newDir);
-        } else
-        {
+        //rotate the ship by 45 degrees if the puzzle for it has been solved
+        if (solved == true && rotated == false) {
+            StartCoroutine(RotateMe(Vector3.up * 45, 1.5f));
+            rotated = true;
+        } else {
             //move the boat by a step
+            float step = speed * Time.deltaTime;
             transform.position += transform.forward * step;
-            Debug.Log(Vector3.Distance(transform.position, destination.position));
 
             //check for gameover
-            if (this.gameObject.GetComponent<Collider>().bounds.Intersects(shipEater.GetComponent<Collider>().bounds))
-            {
+            if (this.gameObject.GetComponent<Collider>().bounds.Intersects(shipEater.GetComponent<Collider>().bounds)) {
                 Destroy(this.gameObject);
                 GameObject.Find("DefaultGamemode").GetComponent<Gamemode>().gameOver();
-            } else if (Vector3.Distance(transform.position, destination.position) <= 12 && flagsRequired.Count > 0)
-            {
-                RemoveFlag();
             }
         }
 
     }
 
-    public void Initialize(int newDifficulty, float newSpeed, Transform lighthouse, Transform exit)
+    //rotate the ship by "byAngles" degrees in "inTime" seconds
+    IEnumerator RotateMe(Vector3 byAngles, float inTime)
+    {
+        var fromAngle = transform.rotation;
+        var toAngle = Quaternion.Euler(transform.eulerAngles + byAngles);
+        for (var t = 0f; t < 1; t += Time.deltaTime / inTime) {
+            transform.rotation = Quaternion.Lerp(fromAngle, toAngle, t);
+            yield return null;
+        }
+    }
+
+    public void Initialize(int newDifficulty, float newSpeed, Transform lighthouse)
     {
         difficulty = newDifficulty;
         speed = newSpeed;
-        this.lighthouse = lighthouse;
-        this.exit = exit;
-        destination = this.lighthouse;
-        transform.LookAt(destination);
+        transform.LookAt(lighthouse);
         shipEater = GameObject.Find("ShipEater");
     }
 
@@ -74,10 +72,8 @@ public class ShipAI : MonoBehaviour
         flagsRequired.RemoveAt(0);
 
         //If there's no flags left then you're solved
-        if (flagsRequired.Count == 0)
-        {
+        if (flagsRequired.Count == 0) {
             solved = true;
-            destination = exit;
         }
     }
 
