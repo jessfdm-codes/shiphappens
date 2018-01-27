@@ -6,7 +6,7 @@ public class ShipAI : MonoBehaviour {
 
 	bool solved;
 	int difficulty;
-	List<int> flagsRequired;
+	List<SemaphoreGesture> flagsRequired;
 	Transform destination;
 
 	// Use this for initialization
