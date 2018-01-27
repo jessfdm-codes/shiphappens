@@ -52,6 +52,7 @@ public class Gamemode : MonoBehaviour
     void SpawnLighthouse()
     {
         GameObject lightHouse = (GameObject)Instantiate(lighthousePrefab, new Vector3(-2.7f, 2.2f, 4.5f), transform.rotation);
+        lightHouse.transform.Rotate(new Vector3(-1, 0, 1));
     }
 
     void SpawnShipEater()
