@@ -31,7 +31,7 @@ public class SemaphoreGestureTarget : SemaphoreGesture {
         Icon = Resources.Load<Sprite>("Semaphore Sprites/" + left + right);
         if (Icon == null)
         {
-            throw new System.Exception();
+            throw new System.IO.FileNotFoundException("The Semaphore Sprit '" + left + right + "' does not exist in the resources folder.");
         }
     }
 

@@ -32,6 +32,7 @@ public class Gamemode : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Debug.Log(SemaphoreGenerator.loadExistentSemaphoreGuestures());
         difficulty = 0;
         speed = 1;
         score = 0;
