@@ -17,16 +17,15 @@ public class ShipAI : MonoBehaviour
         flagsRequired = new List<int>();
         flagsRequired.Add(1);
         solved = false;
-        rotated = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         //rotate the ship by 45 degrees if the puzzle for it has been solved
-        if (solved == true && rotated == false) {
-            StartCoroutine(RotateMe(Vector3.up * 45, 1.5f));
-            rotated = true;
+        if (solved == true) {
+            StartCoroutine(RotateMe(Vector3.right * 45, 1.5f));
+            Destroy(this.gameObject);
         } else {
             //move the boat by a step
             float step = speed * Time.deltaTime;
