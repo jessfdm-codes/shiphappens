@@ -154,10 +154,15 @@ public class Gamemode : MonoBehaviour
     {
         foreach (GameObject b in new List<GameObject>(boats))
         {
-            if (b.GetComponent<ShipAI>().ReceiveGesture(currentGesture))
+            try
             {
-                boats.Remove(b);
-            }
+                if (b.GetComponent<ShipAI>().ReceiveGesture(currentGesture))
+                {
+                    boats.Remove(b);
+                }
+            } catch (MissingReferenceException mse)
+            {}
+            
         }
 
     }
