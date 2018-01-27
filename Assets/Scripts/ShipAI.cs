@@ -72,6 +72,7 @@ public class ShipAI : MonoBehaviour
         //If there's no flags left then you're solved
         if (flagsRequired.Count == 0) {
             solved = true;
+			GetComponentInChildren<SpriteRenderer>().enabled = false;
         }
     }
 

@@ -23,6 +23,8 @@ public class Gamemode : MonoBehaviour
     Transform Spawn2;
     [SerializeField]
     Transform Spawn3;
+	[SerializeField]
+	int spawnRate;
 
     [SerializeField]
     private SemaphoreGesture currentGesture;
@@ -38,10 +40,11 @@ public class Gamemode : MonoBehaviour
         difficulty = 0;
         speed = 1;
         score = 0;
+		spawnRate = 5;
         isPlaying = true;
         SpawnLighthouse();
         SpawnShipEater();
-        SpawnShip(Spawn1);
+		StartCoroutine (SpawnCooldown());
     }
 
     // Update is called once per frame
@@ -81,6 +84,22 @@ public class Gamemode : MonoBehaviour
 
     }
 
+	IEnumerator SpawnCooldown() {
+		while (true) {
+			var chance = Random.Range (0.0f, 1.0f);
+
+			if (chance < 0.33f) {
+				SpawnShip (Spawn1);
+			} else if (chance < 0.66f) {
+				SpawnShip (Spawn2);
+			} else {
+				SpawnShip (Spawn3);
+			}
+
+			yield return new WaitForSeconds (spawnRate);
+		}
+	
+	}
 
     /*
      * Gesture Recog
