@@ -10,12 +10,15 @@ public class ShipAI : MonoBehaviour
     float speed;
     List<int> flagsRequired;
     Transform destination;
+    Transform lighthouse;
+    Transform exit;
     GameObject shipEater;
 
     // Use this for initialization
     void Start()
     {
         flagsRequired = new List<int>();
+        flagsRequired.Add(1);
         solved = false;
     }
 
@@ -23,19 +26,38 @@ public class ShipAI : MonoBehaviour
     void Update()
     {
         float step = speed * Time.deltaTime;
-        transform.position = Vector3.MoveTowards(transform.position, destination.position, step);
-        if (this.gameObject.GetComponent<Collider>().bounds.Intersects(shipEater.GetComponent<Collider>().bounds))
+
+        //make sure the boat is looking at the destination
+        if (Vector3.Dot((destination.position - transform.position).normalized, transform.forward) < 0.9) {
+            Vector3 targetDir = destination.position - transform.position;
+            Vector3 newDir = Vector3.RotateTowards(transform.forward, targetDir, step, 0.0f);
+            transform.rotation = Quaternion.LookRotation(newDir);
+        } else
         {
-            Destroy(this.gameObject);
-            GameObject.Find("DefaultGamemode").GetComponent<Gamemode>().gameOver();
+            //move the boat by a step
+            transform.position += transform.forward * step;
+            Debug.Log(Vector3.Distance(transform.position, destination.position));
+
+            //check for gameover
+            if (this.gameObject.GetComponent<Collider>().bounds.Intersects(shipEater.GetComponent<Collider>().bounds))
+            {
+                Destroy(this.gameObject);
+                GameObject.Find("DefaultGamemode").GetComponent<Gamemode>().gameOver();
+            } else if (Vector3.Distance(transform.position, destination.position) <= 12 && flagsRequired.Count > 0)
+            {
+                RemoveFlag();
+            }
         }
+
     }
 
-    public void Initialize(int newDifficulty, float newSpeed, Transform newDestination)
+    public void Initialize(int newDifficulty, float newSpeed, Transform lighthouse, Transform exit)
     {
         difficulty = newDifficulty;
         speed = newSpeed;
-        destination = newDestination;
+        this.lighthouse = lighthouse;
+        this.exit = exit;
+        destination = this.lighthouse;
         transform.LookAt(destination);
         shipEater = GameObject.Find("ShipEater");
     }
@@ -55,6 +77,7 @@ public class ShipAI : MonoBehaviour
         if (flagsRequired.Count == 0)
         {
             solved = true;
+            destination = exit;
         }
     }
 
