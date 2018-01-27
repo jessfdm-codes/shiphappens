@@ -11,7 +11,7 @@ public class ShipAI : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		flagsRequired = new List<int>();
+		flagsRequired = new List<SemaphoreGesture>();
 		solved = false;
 	}
 	
@@ -20,7 +20,7 @@ public class ShipAI : MonoBehaviour {
 		
 	}
 	
-	void Initialize(int newDifficulty) {
+	public void Initialize(int newDifficulty) {
 		difficulty = newDifficulty;
 	}
 	
