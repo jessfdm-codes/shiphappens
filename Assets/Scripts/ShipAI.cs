@@ -6,16 +6,13 @@ public class ShipAI : MonoBehaviour
 {
 
     bool solved, rotated;
-    int difficulty;
     float speed;
-    List<int> flagsRequired;
+	List<SemaphoreGestureTarget> flagsRequired;
     GameObject shipEater;
 
     // Use this for initialization
     void Start()
     {
-        flagsRequired = new List<int>();
-        flagsRequired.Add(1);
         solved = false;
     }
 
@@ -50,21 +47,30 @@ public class ShipAI : MonoBehaviour
         }
     }
 
-    public void Initialize(int newDifficulty, float newSpeed, Transform lighthouse)
+	public void Initialize(float newSpeed, Transform destination, List<SemaphoreGestureTarget> requiredFlags)
     {
-        difficulty = newDifficulty;
+		flagsRequired = requiredFlags;
         speed = newSpeed;
-        transform.LookAt(lighthouse);
+        transform.LookAt(destination);
         shipEater = GameObject.Find("ShipEater");
+        UpdateFlag();
     }
 
-    public void setDifficulty(int newDifficulty)
+
+	public bool ReceiveGesture(SemaphoreGesture sg) {
+		if (sg.Equals (flagsRequired[0])) {
+			ResolveGesture ();
+		}
+
+		return solved;
+	}
+
+    private void UpdateFlag()
     {
-        difficulty = newDifficulty;
+        this.transform.Find("Icon").GetComponent<SpriteRenderer>().sprite = flagsRequired[0].GetIcon();
     }
 
-
-    void RemoveFlag()
+    void ResolveGesture()
     {
         //Remove the head of the required flags
         flagsRequired.RemoveAt(0);
@@ -72,6 +78,7 @@ public class ShipAI : MonoBehaviour
         //If there's no flags left then you're solved
         if (flagsRequired.Count == 0) {
             solved = true;
+			GetComponentInChildren<SpriteRenderer>().enabled = false;
         }
     }
 

@@ -26,6 +26,11 @@ public class SemaphoreGestureTarget : SemaphoreGesture {
 
     private Sprite Icon;
 
+    public Sprite GetIcon()
+    {
+        return Icon;
+    }
+
     public SemaphoreGestureTarget(string left, string right) : base(left, right)
     {
         Icon = Resources.Load<Sprite>("Semaphore Sprites/" + left + right);

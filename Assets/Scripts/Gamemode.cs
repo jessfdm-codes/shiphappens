@@ -16,6 +16,8 @@ public class Gamemode : MonoBehaviour
     [SerializeField]
     GameObject lighthousePrefab;
 
+	List<GameObject> boats;
+
     //Spawn points for ships
     [SerializeField]
     Transform Spawn1;
@@ -23,6 +25,10 @@ public class Gamemode : MonoBehaviour
     Transform Spawn2;
     [SerializeField]
     Transform Spawn3;
+	[SerializeField]
+	int spawnRate;
+
+	List<SemaphoreGestureTarget> availableGestures;
 
     [SerializeField]
     private SemaphoreGesture currentGesture;
@@ -34,14 +40,16 @@ public class Gamemode : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Debug.Log(SemaphoreGenerator.loadExistentSemaphoreGuestures());
+        availableGestures = SemaphoreGenerator.loadExistentSemaphoreGuestures();
         difficulty = 0;
         speed = 1;
         score = 0;
+		spawnRate = 2;
         isPlaying = true;
+		boats = new List<GameObject> ();
         SpawnLighthouse();
         SpawnShipEater();
-        SpawnShip(Spawn1);
+		StartCoroutine (SpawnCooldown());
     }
 
     // Update is called once per frame
@@ -61,18 +69,30 @@ public class Gamemode : MonoBehaviour
         //CapsuleCollider ShipEaterClone = new CapsuleCollider();
         GameObject ShipEater = GameObject.CreatePrimitive(PrimitiveType.Cube);
         ShipEater.name = "ShipEater";
-        ShipEater.transform.position = new Vector3(-1.35f, 2, 2.4f);
-        ShipEater.GetComponent<BoxCollider>().size = new Vector3(12.2f, 8, 13);
+        ShipEater.transform.position = new Vector3(-0.4f, 2, 1.5f);
+        ShipEater.GetComponent<BoxCollider>().size = new Vector3(16.3f, 8, 18);
         ShipEater.GetComponent<BoxCollider>().isTrigger = true;
         Destroy(ShipEater.GetComponent<MeshFilter>());
         
     }
 
+	List<SemaphoreGestureTarget> GenerateFlags() {
+		int rand = Random.Range (0, availableGestures.Count);
+		List<SemaphoreGestureTarget> newList = new List<SemaphoreGestureTarget> ();
+		newList.Add(availableGestures[rand]);
+
+		return newList;
+
+
+	}
+
     //Spawn a single ship
     void SpawnShip(Transform spawn1)
     {
         GameObject go = (GameObject)Instantiate(shipPrefab, spawn1.position, transform.rotation);
-        go.GetComponent<ShipAI>().Initialize(difficulty, speed, this.gameObject.GetComponent<Transform>());
+		boats.Add (go);
+
+		go.GetComponent<ShipAI>().Initialize(speed, this.gameObject.GetComponent<Transform>(), GenerateFlags() );
     }
 
     public void gameOver()
@@ -81,6 +101,22 @@ public class Gamemode : MonoBehaviour
 
     }
 
+	IEnumerator SpawnCooldown() {
+		while (true) {
+			var chance = Random.Range (0.0f, 1.0f);
+
+			if (chance < 0.33f) {
+				SpawnShip (Spawn1);
+			} else if (chance < 0.66f) {
+				SpawnShip (Spawn2);
+			} else {
+				SpawnShip (Spawn3);
+			}
+
+			yield return new WaitForSeconds (spawnRate);
+		}
+	
+	}
 
     /*
      * Gesture Recog
@@ -90,12 +126,16 @@ public class Gamemode : MonoBehaviour
         if (currLeftHandPostion != null && currRightHandPostion != null)
         {
             currentGesture = new SemaphoreGesture(currLeftHandPostion, currRightHandPostion);
+
         }
+
+        Debug.Log("New player pose ::: [Left: " + currLeftHandPostion + "], [Right: " + currRightHandPostion +"]");
+        BroadcastGesture();
     }
 
     public void UpdateLeftHandPosition(string newPos)
     {
-        if (Regex.IsMatch(newPos, "$g[0-2][0-2]^"))
+        if (Regex.IsMatch(newPos, "^g[0-2][0-2]$"))
         {
             currLeftHandPostion = newPos;
         }
@@ -104,9 +144,21 @@ public class Gamemode : MonoBehaviour
 
     public void UpdateRightHandPosition(string newPos)
     {
-        if (Regex.IsMatch(newPos, "$g[0-2][0-2]^")){
+        if (Regex.IsMatch(newPos, "^g[0-2][0-2]$")){
             currRightHandPostion = newPos;
         }
         RecalculateCurrentGesture();
+    }
+
+    private void BroadcastGesture()
+    {
+        foreach (GameObject b in new List<GameObject>(boats))
+        {
+            if (b.GetComponent<ShipAI>().ReceiveGesture(currentGesture))
+            {
+                boats.Remove(b);
+            }
+        }
+
     }
 }
