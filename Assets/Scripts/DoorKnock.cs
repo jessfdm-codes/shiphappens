@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DoorKnock : MonoBehaviour {
 
@@ -16,6 +17,9 @@ public class DoorKnock : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        
+        SteamVR_Fade.Start(Color.clear, 0f);
+        SteamVR_Fade.Start(Color.black, 2f);
+
+        SceneManager.LoadScene("Level", LoadSceneMode.Single);
     }
 }
