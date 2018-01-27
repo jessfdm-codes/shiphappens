@@ -31,7 +31,7 @@ public class Gamemode : MonoBehaviour
         score = 0;
         isPlaying = true;
         SpawnShipEater();
-        SpawnShip(Spawn1, Spawn2);
+        SpawnShip(Spawn1);
     }
 
     // Update is called once per frame
@@ -53,10 +53,10 @@ public class Gamemode : MonoBehaviour
     }
 
     //Spawn a single ship
-    void SpawnShip(Transform spawn1, Transform spawn2)
+    void SpawnShip(Transform spawn1)
     {
         GameObject go = (GameObject)Instantiate(shipPrefab, spawn1.position, transform.rotation);
-        go.GetComponent<ShipAI>().Initialize(difficulty, speed, this.gameObject.GetComponent<Transform>(), spawn2.transform);
+        go.GetComponent<ShipAI>().Initialize(difficulty, speed, this.gameObject.GetComponent<Transform>());
     }
 
     public void gameOver()

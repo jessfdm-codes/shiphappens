@@ -38,7 +38,6 @@ public class ShipAI : MonoBehaviour
                 GameObject.Find("DefaultGamemode").GetComponent<Gamemode>().gameOver();
             }
         }
-
     }
 
     //rotate the ship by "byAngles" degrees in "inTime" seconds
