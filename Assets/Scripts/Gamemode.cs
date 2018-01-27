@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class Gamemode : MonoBehaviour
@@ -21,7 +22,12 @@ public class Gamemode : MonoBehaviour
     [SerializeField]
     Transform Spawn3;
 
-
+    [SerializeField]
+    private SemaphoreGesture currentGesture;
+    [SerializeField]
+    private string currLeftHandPostion;
+    [SerializeField]
+    private string currRightHandPostion;
 
     // Use this for initialization
     void Start()
@@ -63,5 +69,34 @@ public class Gamemode : MonoBehaviour
     {
         isPlaying = false;
 
+    }
+
+
+    /*
+     * Gesture Recog
+     */
+     private void RecalculateCurrentGesture()
+    {
+        if (currLeftHandPostion != null && currRightHandPostion != null)
+        {
+            currentGesture = new SemaphoreGesture(currLeftHandPostion, currRightHandPostion);
+        }
+    }
+
+    public void UpdateLeftHandPosition(string newPos)
+    {
+        if (Regex.IsMatch(newPos, "$g[0-2][0-2]^"))
+        {
+            currLeftHandPostion = newPos;
+        }
+        RecalculateCurrentGesture();
+    }
+
+    public void UpdateRightHandPosition(string newPos)
+    {
+        if (Regex.IsMatch(newPos, "$g[0-2][0-2]^")){
+            currRightHandPostion = newPos;
+        }
+        RecalculateCurrentGesture();
     }
 }

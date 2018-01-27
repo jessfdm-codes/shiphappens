@@ -53,12 +53,6 @@ public class SemaphoreGrid : MonoBehaviour {
                         break;
                 }
 
-                Debug.Log(newX);
-                Debug.Log(newY);
-                Debug.Log(width);
-                Debug.Log(height);
-                Debug.Log("=-=-=-=-=-=-=-=-=-=-=");
-
                 GameObject go = Instantiate(thresholdPrefab, this.transform);
                 go.transform.localPosition = new Vector3(newX, newY, 0.0f);
                 go.transform.localScale = new Vector3(width, height, 100.0f);
