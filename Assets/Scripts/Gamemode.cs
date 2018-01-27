@@ -44,7 +44,7 @@ public class Gamemode : MonoBehaviour
         difficulty = 0;
         speed = 1;
         score = 0;
-		spawnRate = 5;
+		spawnRate = 2;
         isPlaying = true;
 		boats = new List<GameObject> ();
         SpawnLighthouse();
@@ -69,8 +69,8 @@ public class Gamemode : MonoBehaviour
         //CapsuleCollider ShipEaterClone = new CapsuleCollider();
         GameObject ShipEater = GameObject.CreatePrimitive(PrimitiveType.Cube);
         ShipEater.name = "ShipEater";
-        ShipEater.transform.position = new Vector3(-1.35f, 2, 2.4f);
-        ShipEater.GetComponent<BoxCollider>().size = new Vector3(12.2f, 8, 13);
+        ShipEater.transform.position = new Vector3(-0.4f, 2, 1.5f);
+        ShipEater.GetComponent<BoxCollider>().size = new Vector3(16.3f, 8, 18);
         ShipEater.GetComponent<BoxCollider>().isTrigger = true;
         Destroy(ShipEater.GetComponent<MeshFilter>());
         
@@ -118,15 +118,6 @@ public class Gamemode : MonoBehaviour
 	
 	}
 
-	void BroadcastGesture() {
-		foreach (GameObject b in boats) {
-			if (b.GetComponent<ShipAI> ().ReceiveGesture (currentGesture)) {
-				boats.Remove (b);
-			}
-		}
-	
-	}
-
     /*
      * Gesture Recog
      */
@@ -137,11 +128,14 @@ public class Gamemode : MonoBehaviour
             currentGesture = new SemaphoreGesture(currLeftHandPostion, currRightHandPostion);
 
         }
+
+        Debug.Log("New player pose ::: [Left: " + currLeftHandPostion + "], [Right: " + currRightHandPostion +"]");
+        BroadcastGesture();
     }
 
     public void UpdateLeftHandPosition(string newPos)
     {
-        if (Regex.IsMatch(newPos, "$g[0-2][0-2]^"))
+        if (Regex.IsMatch(newPos, "^g[0-2][0-2]$"))
         {
             currLeftHandPostion = newPos;
         }
@@ -150,9 +144,21 @@ public class Gamemode : MonoBehaviour
 
     public void UpdateRightHandPosition(string newPos)
     {
-        if (Regex.IsMatch(newPos, "$g[0-2][0-2]^")){
+        if (Regex.IsMatch(newPos, "^g[0-2][0-2]$")){
             currRightHandPostion = newPos;
         }
         RecalculateCurrentGesture();
+    }
+
+    private void BroadcastGesture()
+    {
+        foreach (GameObject b in new List<GameObject>(boats))
+        {
+            if (b.GetComponent<ShipAI>().ReceiveGesture(currentGesture))
+            {
+                boats.Remove(b);
+            }
+        }
+
     }
 }

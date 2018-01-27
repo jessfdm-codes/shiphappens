@@ -53,18 +53,24 @@ public class ShipAI : MonoBehaviour
         speed = newSpeed;
         transform.LookAt(destination);
         shipEater = GameObject.Find("ShipEater");
+        UpdateFlag();
     }
 
 
 	public bool ReceiveGesture(SemaphoreGesture sg) {
 		if (sg.Equals (flagsRequired[0])) {
-			RemoveFlag ();
+			ResolveGesture ();
 		}
 
 		return solved;
 	}
 
-    void RemoveFlag()
+    private void UpdateFlag()
+    {
+        this.transform.Find("Icon").GetComponent<SpriteRenderer>().sprite = flagsRequired[0].GetIcon();
+    }
+
+    void ResolveGesture()
     {
         //Remove the head of the required flags
         flagsRequired.RemoveAt(0);
