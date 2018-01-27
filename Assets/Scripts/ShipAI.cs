@@ -20,7 +20,7 @@ public class ShipAI : MonoBehaviour {
 		
 	}
 	
-	void Initialize(int newDifficulty) {
+	public void Initialize(int newDifficulty) {
 		difficulty = newDifficulty;
 	}
 	
