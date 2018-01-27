@@ -6,16 +6,13 @@ public class ShipAI : MonoBehaviour
 {
 
     bool solved, rotated;
-    int difficulty;
     float speed;
-    List<int> flagsRequired;
+	List<SemaphoreGestureTarget> flagsRequired;
     GameObject shipEater;
 
     // Use this for initialization
     void Start()
     {
-        flagsRequired = new List<int>();
-        flagsRequired.Add(1);
         solved = false;
     }
 
@@ -50,19 +47,22 @@ public class ShipAI : MonoBehaviour
         }
     }
 
-    public void Initialize(int newDifficulty, float newSpeed, Transform lighthouse)
+	public void Initialize(float newSpeed, Transform destination, List<SemaphoreGestureTarget> requiredFlags)
     {
-        difficulty = newDifficulty;
+		flagsRequired = requiredFlags;
         speed = newSpeed;
-        transform.LookAt(lighthouse);
+        transform.LookAt(destination);
         shipEater = GameObject.Find("ShipEater");
     }
 
-    public void setDifficulty(int newDifficulty)
-    {
-        difficulty = newDifficulty;
-    }
 
+	public bool ReceiveGesture(SemaphoreGesture sg) {
+		if (sg.Equals (flagsRequired[0])) {
+			RemoveFlag ();
+		}
+
+		return solved;
+	}
 
     void RemoveFlag()
     {

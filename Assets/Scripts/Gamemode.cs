@@ -16,6 +16,8 @@ public class Gamemode : MonoBehaviour
     [SerializeField]
     GameObject lighthousePrefab;
 
+	List<GameObject> boats;
+
     //Spawn points for ships
     [SerializeField]
     Transform Spawn1;
@@ -25,6 +27,8 @@ public class Gamemode : MonoBehaviour
     Transform Spawn3;
 	[SerializeField]
 	int spawnRate;
+
+	List<SemaphoreGestureTarget> availableGestures;
 
     [SerializeField]
     private SemaphoreGesture currentGesture;
@@ -36,12 +40,13 @@ public class Gamemode : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Debug.Log(SemaphoreGenerator.loadExistentSemaphoreGuestures());
+        availableGestures = SemaphoreGenerator.loadExistentSemaphoreGuestures();
         difficulty = 0;
         speed = 1;
         score = 0;
 		spawnRate = 5;
         isPlaying = true;
+		boats = new List<GameObject> ();
         SpawnLighthouse();
         SpawnShipEater();
 		StartCoroutine (SpawnCooldown());
@@ -71,11 +76,23 @@ public class Gamemode : MonoBehaviour
         
     }
 
+	List<SemaphoreGestureTarget> GenerateFlags() {
+		int rand = Random.Range (0, availableGestures.Count);
+		List<SemaphoreGestureTarget> newList = new List<SemaphoreGestureTarget> ();
+		newList.Add(availableGestures[rand]);
+
+		return newList;
+
+
+	}
+
     //Spawn a single ship
     void SpawnShip(Transform spawn1)
     {
         GameObject go = (GameObject)Instantiate(shipPrefab, spawn1.position, transform.rotation);
-        go.GetComponent<ShipAI>().Initialize(difficulty, speed, this.gameObject.GetComponent<Transform>());
+		boats.Add (go);
+
+		go.GetComponent<ShipAI>().Initialize(speed, this.gameObject.GetComponent<Transform>(), GenerateFlags() );
     }
 
     public void gameOver()
@@ -101,6 +118,15 @@ public class Gamemode : MonoBehaviour
 	
 	}
 
+	void BroadcastGesture() {
+		foreach (GameObject b in boats) {
+			if (b.GetComponent<ShipAI> ().ReceiveGesture (currentGesture)) {
+				boats.Remove (b);
+			}
+		}
+	
+	}
+
     /*
      * Gesture Recog
      */
@@ -109,6 +135,7 @@ public class Gamemode : MonoBehaviour
         if (currLeftHandPostion != null && currRightHandPostion != null)
         {
             currentGesture = new SemaphoreGesture(currLeftHandPostion, currRightHandPostion);
+
         }
     }
 
