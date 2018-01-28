@@ -132,7 +132,7 @@ public class Gamemode : MonoBehaviour
         setTextProperties(15, TextAnchor.UpperCenter, gameOverFont);
         onScreenText.text = "Oh no, a ship hit the rocks! Game over!\nScore: " + score;
 
-        StartCoroutine(ChangeScene("Menu", Color.clear, Color.black, 6f));
+        StartCoroutine(ChangeScene("Menu", Color.clear, Color.black, 10f));
     }
 
     //fade screen from "from" to "to" in "inTime" seconds
