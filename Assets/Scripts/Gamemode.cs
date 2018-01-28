@@ -6,6 +6,11 @@ using UnityEngine;
 public class Gamemode : MonoBehaviour
 {
 
+	[SerializeField]
+	int spawnRate;
+	const int initialSpawnRate = 3;
+
+
     [SerializeField]
     int score; //score for the player
     bool isPlaying; //whether we're playing or not
@@ -26,7 +31,9 @@ public class Gamemode : MonoBehaviour
     [SerializeField]
     Transform Spawn3;
 	[SerializeField]
-	int spawnRate;
+	Transform Spawn4;
+	[SerializeField]
+	Transform Spawn5;
 
 	List<SemaphoreGestureTarget> availableGestures;
 
@@ -44,7 +51,7 @@ public class Gamemode : MonoBehaviour
         difficulty = 0;
         speed = 1;
         score = 0;
-		spawnRate = 2;
+		spawnRate = initialSpawnRate;
         isPlaying = true;
 		boats = new List<GameObject> ();
         SpawnLighthouse();
@@ -78,8 +85,20 @@ public class Gamemode : MonoBehaviour
 
 	List<SemaphoreGestureTarget> GenerateFlags() {
 		int rand = Random.Range (0, availableGestures.Count);
+		float rand2 = Random.Range (0.0f, 1.0f);
+
 		List<SemaphoreGestureTarget> newList = new List<SemaphoreGestureTarget> ();
+		float addChance = difficulty / 10.0f;
+
 		newList.Add(availableGestures[rand]);
+
+		while (addChance > 0) {
+			if (rand2 > 0.5f) {
+				newList.Add (availableGestures [rand]);
+			}
+
+			addChance -= 10.0f;
+		}
 
 		return newList;
 
@@ -87,11 +106,11 @@ public class Gamemode : MonoBehaviour
 	}
 
     //Spawn a single ship
-    void SpawnShip(Transform spawn1)
+	void SpawnShip(Transform spawn)
     {
-        GameObject go = (GameObject)Instantiate(shipPrefab, spawn1.position, transform.rotation);
+        GameObject go = (GameObject)Instantiate(shipPrefab, spawn.position, transform.rotation);
 		boats.Add (go);
-
+		difficulty += 1;
 		go.GetComponent<ShipAI>().Initialize(speed, this.gameObject.GetComponent<Transform>(), GenerateFlags() );
     }
 
@@ -105,13 +124,18 @@ public class Gamemode : MonoBehaviour
 		while (true) {
 			var chance = Random.Range (0.0f, 1.0f);
 
-			if (chance < 0.33f) {
+			if (chance < 0.2f) {
 				SpawnShip (Spawn1);
-			} else if (chance < 0.66f) {
+			} else if (chance < 0.4f) {
 				SpawnShip (Spawn2);
-			} else {
+			} else if (chance < 0.6f) {
 				SpawnShip (Spawn3);
+			} else if (chance < 0.8f) {
+				SpawnShip (Spawn4);
+			} else {
+				SpawnShip (Spawn5);
 			}
+				
 
 			yield return new WaitForSeconds (spawnRate);
 		}
