@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Gamemode : MonoBehaviour
 {
@@ -22,7 +23,16 @@ public class Gamemode : MonoBehaviour
     [SerializeField]
     GameObject lighthousePrefab;
 
-	List<GameObject> boats;
+    [SerializeField]
+    UnityEngine.UI.Text scoreText;
+    [SerializeField]
+    UnityEngine.UI.Text gameOverText;
+    [SerializeField]
+    Font scoreFont;
+    [SerializeField]
+    Font gameOverFont;
+
+    List<GameObject> boats;
 
     //Spawn points for ships
     [SerializeField]
@@ -52,7 +62,10 @@ public class Gamemode : MonoBehaviour
         difficulty = 0;
         speed = 1;
         score = 0;
-		spawnRate = initialSpawnRate;
+        scoreText.enabled = true;
+        gameOverText.enabled = false;
+        scoreText.text = "";
+		    spawnRate = initialSpawnRate;
         isPlaying = true;
 		boats = new List<GameObject> ();
         SpawnLighthouse();
@@ -116,7 +129,40 @@ public class Gamemode : MonoBehaviour
     public void gameOver()
     {
         isPlaying = false;
+        
+        //Freeze all objects
+        foreach (GameObject ship in GameObject.FindGameObjectsWithTag("Ship"))
+        {
+            ship.GetComponent<ShipAI>().enabled = false;
+        }
+        GameObject radio = GameObject.Find("Radio");
+        if(radio != null)
+        {
+            AudioSource audio = radio.GetComponent<AudioSource>();
+            audio.volume = 0.2f;
+        }
 
+        scoreText.enabled = false;
+        gameOverText.enabled = true;
+        gameOverText.text = "Oh no, a ship hit the rocks! Game over!\nScore: " + score;
+
+        StartCoroutine(ChangeScene("Menu", Color.clear, Color.black, 10f));
+    }
+
+    //fade screen from "from" to "to" in "inTime" seconds
+    IEnumerator FadeScreen(Color from, Color to, float inTime)
+    {
+        SteamVR_Fade.Start(from, 0f);
+        SteamVR_Fade.Start(to, inTime);
+
+        yield return new WaitForSeconds(inTime);
+    }
+
+    //fade the screen then change the scene
+    IEnumerator ChangeScene(string scene, Color from, Color to, float inTime)
+    {
+        yield return StartCoroutine(FadeScreen(from, to, inTime));
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
 
 	IEnumerator SpawnCooldown() {
@@ -197,6 +243,7 @@ public class Gamemode : MonoBehaviour
     public void IncrementScore()
     {
         score++;
+        scoreText.text = "Score: " + score;
     }
 
     public int GetScore()
