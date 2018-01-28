@@ -20,6 +20,12 @@ public class SemaphoreGesture {
 			return false;
 		}
 	}
+
+    override
+    public string ToString()
+    {
+        return "" + left + right;
+    }
 }
 
 public class SemaphoreGestureTarget : SemaphoreGesture {
