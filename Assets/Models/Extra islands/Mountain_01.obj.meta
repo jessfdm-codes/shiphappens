@@ -12,12 +12,13 @@ ModelImporter:
     2100000: 455A64
     2100002: FFFFFF
     2100004: 8BC34A
+    2100006: defaultMat
     2300000: default
     3300000: default
     4300000: default
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
