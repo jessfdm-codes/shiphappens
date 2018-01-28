@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Gamemode : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class Gamemode : MonoBehaviour
     GameObject shipPrefab;
     [SerializeField]
     GameObject lighthousePrefab;
+    [SerializeField]
+    UnityEngine.UI.Text onScreenText;
 
 	List<GameObject> boats;
 
@@ -45,6 +48,9 @@ public class Gamemode : MonoBehaviour
         difficulty = 0;
         speed = 1;
         score = 0;
+        onScreenText.fontSize = 49;
+        onScreenText.alignment = TextAnchor.UpperLeft;
+        onScreenText.text = "";
 		spawnRate = 2;
         isPlaying = true;
 		boats = new List<GameObject> ();
@@ -99,7 +105,40 @@ public class Gamemode : MonoBehaviour
     public void gameOver()
     {
         isPlaying = false;
+        
+        //Freeze all objects
+        foreach (GameObject ship in GameObject.FindGameObjectsWithTag("Ship"))
+        {
+            ship.GetComponent<ShipAI>().enabled = false;
+        }
+        GameObject radio = GameObject.Find("Radio");
+        if(radio != null)
+        {
+            AudioSource audio = radio.GetComponent<AudioSource>();
+            audio.volume = 0.2f;
+        }
 
+        onScreenText.fontSize = 10;
+        onScreenText.alignment = TextAnchor.UpperCenter;
+        onScreenText.text = "Oh no, a ship hit the rocks!\nGame over!\nScore: " + score;
+
+        StartCoroutine(ChangeScene("Menu", Color.clear, Color.black, 6f));
+    }
+
+    //fade screen from "from" to "to" in "inTime" seconds
+    IEnumerator FadeScreen(Color from, Color to, float inTime)
+    {
+        SteamVR_Fade.Start(from, 0f);
+        SteamVR_Fade.Start(to, inTime);
+
+        yield return new WaitForSeconds(inTime);
+    }
+
+    //fade the screen then change the scene
+    IEnumerator ChangeScene(string scene, Color from, Color to, float inTime)
+    {
+        yield return StartCoroutine(FadeScreen(from, to, inTime));
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
 
 	IEnumerator SpawnCooldown() {
@@ -172,6 +211,7 @@ public class Gamemode : MonoBehaviour
     public void IncrementScore()
     {
         score++;
+        onScreenText.text = "Score: " + score;
     }
 
     public int GetScore()

@@ -17,9 +17,21 @@ public class DoorKnock : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        SteamVR_Fade.Start(Color.clear, 0f);
-        SteamVR_Fade.Start(Color.black, 2f);
+        StartCoroutine(ChangeScene("Level", Color.clear, Color.black, 2.5f));
+    }
 
-        SceneManager.LoadScene("Level", LoadSceneMode.Single);
+    IEnumerator FadeScreen(Color from, Color to, float inTime)
+    {
+        SteamVR_Fade.Start(from, 0f);
+        SteamVR_Fade.Start(to, inTime);
+
+        yield return new WaitForSeconds(inTime);
+    }
+
+    //fade the screen then change the scene
+    IEnumerator ChangeScene(string scene, Color from, Color to, float inTime)
+    {
+        yield return StartCoroutine(FadeScreen(from, to, inTime));
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
 }

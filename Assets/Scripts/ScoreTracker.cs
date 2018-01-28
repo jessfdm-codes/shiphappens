@@ -19,6 +19,6 @@ public class ScoreTracker : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        txt.text = controller.GetScore().ToString();
+        //txt.text = controller.GetScore().ToString();
 	}
 }
