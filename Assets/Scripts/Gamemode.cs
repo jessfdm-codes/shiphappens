@@ -19,7 +19,9 @@ public class Gamemode : MonoBehaviour
     GameObject lighthousePrefab;
 
     [SerializeField]
-    UnityEngine.UI.Text onScreenText;
+    UnityEngine.UI.Text scoreText;
+    [SerializeField]
+    UnityEngine.UI.Text gameOverText;
     [SerializeField]
     Font scoreFont;
     [SerializeField]
@@ -53,21 +55,15 @@ public class Gamemode : MonoBehaviour
         difficulty = 0;
         speed = 1;
         score = 0;
-        setTextProperties(35, TextAnchor.UpperLeft, scoreFont);
-        onScreenText.text = "";
+        scoreText.enabled = true;
+        gameOverText.enabled = false;
+        scoreText.text = "";
 		spawnRate = 2;
         isPlaying = true;
 		boats = new List<GameObject> ();
         SpawnLighthouse();
         SpawnShipEater();
 		StartCoroutine (SpawnCooldown());
-    }
-
-    void setTextProperties(int size, TextAnchor align, Font font)
-    {
-        onScreenText.fontSize = size;
-        onScreenText.alignment = align;
-        onScreenText.font = font;
     }
 
     // Update is called once per frame
@@ -129,8 +125,9 @@ public class Gamemode : MonoBehaviour
             audio.volume = 0.2f;
         }
 
-        setTextProperties(15, TextAnchor.UpperCenter, gameOverFont);
-        onScreenText.text = "Oh no, a ship hit the rocks! Game over!\nScore: " + score;
+        scoreText.enabled = false;
+        gameOverText.enabled = true;
+        gameOverText.text = "Oh no, a ship hit the rocks! Game over!\nScore: " + score;
 
         StartCoroutine(ChangeScene("Menu", Color.clear, Color.black, 10f));
     }
@@ -221,7 +218,7 @@ public class Gamemode : MonoBehaviour
     public void IncrementScore()
     {
         score++;
-        onScreenText.text = "Score: " + score;
+        scoreText.text = "Score: " + score;
     }
 
     public int GetScore()
