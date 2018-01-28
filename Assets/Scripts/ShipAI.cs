@@ -82,14 +82,16 @@ public class ShipAI : MonoBehaviour
         flagsRequired.RemoveAt(0);
 
         //If there's no flags left then you're solved
-        if (flagsRequired.Count == 0) {
-            solved = true;
+		if (flagsRequired.Count == 0) {
+			solved = true;
             foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
             {
                 sr.enabled = false;
             }
             controller.IncrementScore();
-        }
+		} else {
+			UpdateFlag ();
+		}
     }
 
 
