@@ -8,15 +8,26 @@ public class ShipAI : MonoBehaviour
     Gamemode controller;
     bool solved, rotated;
     float speed;
+    [SerializeField]
 	List<SemaphoreGestureTarget> flagsRequired;
     GameObject shipEater;
+    [SerializeField]
+    string curr;
+
+    [SerializeField]
+	private Sprite speechBubbleWhite;
+    [SerializeField]
+    private Sprite speechBubbleGreen;
+
+    [SerializeField]
+    private SpriteRenderer iconRenderer;
+    [SerializeField]
+    private SpriteRenderer speechBubbleRenderer;
 
     // Use this for initialization
     void Start()
     {
         solved = false;
-        rotated = false;
-        controller = GameObject.Find("DefaultGamemode").GetComponent<Gamemode>();
     }
 
     // Update is called once per frame
@@ -34,7 +45,7 @@ public class ShipAI : MonoBehaviour
             //check for gameover
             if (this.gameObject.GetComponent<Collider>().bounds.Intersects(shipEater.GetComponent<Collider>().bounds)) {
                 Destroy(this.gameObject);
-                GameObject.Find("DefaultGamemode").GetComponent<Gamemode>().gameOver();
+                controller.gameOver();
             }
         }
     }
@@ -55,11 +66,16 @@ public class ShipAI : MonoBehaviour
 
 	public void Initialize(float newSpeed, Transform destination, List<SemaphoreGestureTarget> requiredFlags)
     {
-		flagsRequired = requiredFlags;
+        controller = GameObject.Find("DefaultGamemode").GetComponent<Gamemode>();
+        speechBubbleWhite = Resources.Load<Sprite>("SpeechBubble");
+        speechBubbleGreen = Resources.Load<Sprite>("SpeechBubbleGreen");
+        iconRenderer = this.transform.Find("Icon").GetComponent<SpriteRenderer>();
+        speechBubbleRenderer = this.transform.Find("SpeechBubble").GetComponent<SpriteRenderer>();
+        flagsRequired = requiredFlags;
         speed = newSpeed;
         transform.LookAt(destination);
         shipEater = GameObject.Find("ShipEater");
-        UpdateFlag();
+        iconRenderer.sprite = flagsRequired[0].GetIcon();
     }
 
 
@@ -71,9 +87,26 @@ public class ShipAI : MonoBehaviour
 		return solved;
 	}
 
-    private void UpdateFlag()
+	IEnumerator UpdateFlag()
     {
-        this.transform.Find("Icon").GetComponent<SpriteRenderer>().sprite = flagsRequired[0].GetIcon();
+		speechBubbleRenderer.sprite = speechBubbleGreen;
+        yield return new WaitForSeconds(0.5f);
+
+		iconRenderer.sprite = flagsRequired[0].GetIcon();
+        Debug.Log("g");
+		speechBubbleRenderer.sprite = speechBubbleWhite;
+		yield return null;
+
+    }
+
+    IEnumerator SuccessFlag()
+    {
+        speechBubbleRenderer.sprite = speechBubbleGreen;
+        yield return new WaitForSeconds(0.5f);
+        foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
+        {
+            sr.enabled = false;
+        }
     }
 
     void ResolveGesture()
@@ -82,13 +115,12 @@ public class ShipAI : MonoBehaviour
         flagsRequired.RemoveAt(0);
 
         //If there's no flags left then you're solved
-        if (flagsRequired.Count == 0) {
-            solved = true;
-            foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
-            {
-                sr.enabled = false;
-            }
+		if (flagsRequired.Count == 0) {
+			solved = true;
+            StartCoroutine(SuccessFlag());
             controller.IncrementScore();
+		} else {
+            StartCoroutine(UpdateFlag());
         }
     }
 
