@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: f9e51a50361455546842245de7aeb7d5
-timeCreated: 1517096348
+guid: 6792cb3ef36cff34d980c811819a9532
+timeCreated: 1517101146
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -10,7 +10,7 @@ ModelImporter:
     400000: mesh1426892322
     400002: //RootNode
     2100000: mat19
-    2100002: mat12
+    2100002: mat8
     2300000: mesh1426892322
     3300000: mesh1426892322
     4300000: mesh1426892322
