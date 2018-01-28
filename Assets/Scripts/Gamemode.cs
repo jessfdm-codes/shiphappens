@@ -94,6 +94,7 @@ public class Gamemode : MonoBehaviour
 
 		while (addChance > 0) {
 			if (rand2 > 0.5f) {
+				rand = Random.Range (0, availableGestures.Count);
 				newList.Add (availableGestures [rand]);
 			}
 
