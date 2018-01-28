@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -165,5 +166,16 @@ public class Gamemode : MonoBehaviour
             
         }
 
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void IncrementScore()
+    {
+        score++;
+    }
+
+    public int GetScore()
+    {
+        return score;
     }
 }
