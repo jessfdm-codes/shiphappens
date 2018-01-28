@@ -17,10 +17,15 @@ public class Gamemode : MonoBehaviour
     GameObject shipPrefab;
     [SerializeField]
     GameObject lighthousePrefab;
+
     [SerializeField]
     UnityEngine.UI.Text onScreenText;
+    [SerializeField]
+    Font scoreFont;
+    [SerializeField]
+    Font gameOverFont;
 
-	List<GameObject> boats;
+    List<GameObject> boats;
 
     //Spawn points for ships
     [SerializeField]
@@ -48,8 +53,7 @@ public class Gamemode : MonoBehaviour
         difficulty = 0;
         speed = 1;
         score = 0;
-        onScreenText.fontSize = 49;
-        onScreenText.alignment = TextAnchor.UpperLeft;
+        setTextProperties(35, TextAnchor.UpperLeft, scoreFont);
         onScreenText.text = "";
 		spawnRate = 2;
         isPlaying = true;
@@ -57,6 +61,13 @@ public class Gamemode : MonoBehaviour
         SpawnLighthouse();
         SpawnShipEater();
 		StartCoroutine (SpawnCooldown());
+    }
+
+    void setTextProperties(int size, TextAnchor align, Font font)
+    {
+        onScreenText.fontSize = size;
+        onScreenText.alignment = align;
+        onScreenText.font = font;
     }
 
     // Update is called once per frame
@@ -118,9 +129,8 @@ public class Gamemode : MonoBehaviour
             audio.volume = 0.2f;
         }
 
-        onScreenText.fontSize = 10;
-        onScreenText.alignment = TextAnchor.UpperCenter;
-        onScreenText.text = "Oh no, a ship hit the rocks!\nGame over!\nScore: " + score;
+        setTextProperties(15, TextAnchor.UpperCenter, gameOverFont);
+        onScreenText.text = "Oh no, a ship hit the rocks! Game over!\nScore: " + score;
 
         StartCoroutine(ChangeScene("Menu", Color.clear, Color.black, 6f));
     }
