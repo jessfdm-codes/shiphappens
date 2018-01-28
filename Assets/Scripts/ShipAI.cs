@@ -14,15 +14,16 @@ public class ShipAI : MonoBehaviour
     void Start()
     {
         solved = false;
+        rotated = false;
     }
 
     // Update is called once per frame
     void Update()
     {
         //rotate the ship by 45 degrees if the puzzle for it has been solved
-        if (solved == true) {
-            StartCoroutine(RotateMe(Vector3.right * 45, 1.5f));
-            Destroy(this.gameObject);
+        if (solved == true && rotated == false) {
+            rotated = true;
+            StartCoroutine(DescendMe(Vector3.right * 5, 6f));
         } else {
             //move the boat by a step
             float step = speed * Time.deltaTime;
@@ -37,14 +38,17 @@ public class ShipAI : MonoBehaviour
     }
 
     //rotate the ship by "byAngles" degrees in "inTime" seconds
-    IEnumerator RotateMe(Vector3 byAngles, float inTime)
+    IEnumerator DescendMe(Vector3 byAngle, float inTime)
     {
         var fromAngle = transform.rotation;
-        var toAngle = Quaternion.Euler(transform.eulerAngles + byAngles);
+        var toAngle = Quaternion.Euler(transform.eulerAngles + byAngle);
         for (var t = 0f; t < 1; t += Time.deltaTime / inTime) {
             transform.rotation = Quaternion.Lerp(fromAngle, toAngle, t);
+            transform.position += (transform.forward * 0.01f);
+            transform.position -= (transform.up * 0.005f);
             yield return null;
         }
+        Destroy(this.gameObject);
     }
 
 	public void Initialize(float newSpeed, Transform destination, List<SemaphoreGestureTarget> requiredFlags)
@@ -78,7 +82,11 @@ public class ShipAI : MonoBehaviour
         //If there's no flags left then you're solved
         if (flagsRequired.Count == 0) {
             solved = true;
-			GetComponentInChildren<SpriteRenderer>().enabled = false;
+			//GetComponentInChildren<SpriteRenderer>().enabled = false;
+            foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
+            {
+                sr.enabled = false;
+            }
         }
     }
 
