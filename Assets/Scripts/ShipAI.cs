@@ -5,6 +5,7 @@ using UnityEngine;
 public class ShipAI : MonoBehaviour
 {
 
+    Gamemode controller;
     bool solved, rotated;
     float speed;
 	List<SemaphoreGestureTarget> flagsRequired;
@@ -15,6 +16,7 @@ public class ShipAI : MonoBehaviour
     {
         solved = false;
         rotated = false;
+        controller = GameObject.Find("DefaultGamemode").GetComponent<Gamemode>();
     }
 
     // Update is called once per frame
@@ -82,11 +84,11 @@ public class ShipAI : MonoBehaviour
         //If there's no flags left then you're solved
         if (flagsRequired.Count == 0) {
             solved = true;
-			//GetComponentInChildren<SpriteRenderer>().enabled = false;
             foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
             {
                 sr.enabled = false;
             }
+            controller.IncrementScore();
         }
     }
 
