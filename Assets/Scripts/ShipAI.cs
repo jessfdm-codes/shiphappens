@@ -11,11 +11,21 @@ public class ShipAI : MonoBehaviour
 	List<SemaphoreGestureTarget> flagsRequired;
     GameObject shipEater;
 
+	private Sprite speechBubbleWhite;
+	private Sprite speechBubbleGreen;
+
+	private SpriteRenderer iconRenderer;
+	private SpriteRenderer speechBubbleRenderer;
+
     // Use this for initialization
     void Start()
     {
         solved = false;
         controller = GameObject.Find("DefaultGamemode").GetComponent<Gamemode>();
+		speechBubbleWhite = Resources.Load<Sprite> ("SpeechBubble");
+		speechBubbleGreen = Resources.Load<Sprite> ("SpeechBubbleGreen");
+		iconRenderer = this.transform.Find ("Icon").GetComponent<SpriteRenderer> ();
+		speechBubbleRenderer = this.transform.Find ("SpeechBubble").GetComponent<SpriteRenderer> ();
     }
 
     // Update is called once per frame
@@ -33,7 +43,7 @@ public class ShipAI : MonoBehaviour
             //check for gameover
             if (this.gameObject.GetComponent<Collider>().bounds.Intersects(shipEater.GetComponent<Collider>().bounds)) {
                 Destroy(this.gameObject);
-                GameObject.Find("DefaultGamemode").GetComponent<Gamemode>().gameOver();
+                controller.gameOver();
             }
         }
     }
@@ -67,9 +77,15 @@ public class ShipAI : MonoBehaviour
 		return solved;
 	}
 
-    private void UpdateFlag()
+	IEnumerator UpdateFlag()
     {
-        this.transform.Find("Icon").GetComponent<SpriteRenderer>().sprite = flagsRequired[0].GetIcon();
+		speechBubbleRenderer.sprite = speechBubbleGreen;
+		WaitForSeconds (0.5f);
+
+		iconRenderer.sprite = flagsRequired[0].GetIcon();
+		speechBubbleRenderer.sprite = speechBubbleWhite;
+		yield return null;
+
     }
 
     void ResolveGesture()
@@ -82,7 +98,7 @@ public class ShipAI : MonoBehaviour
 			solved = true;
 			GetComponentInChildren<SpriteRenderer> ().enabled = false;
 		} else {
-			UpdateFlag ();
+			StartCoroutine(UpdateFlag ());
 		}
     }
 

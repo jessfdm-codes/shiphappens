@@ -8,8 +8,8 @@ public class Gamemode : MonoBehaviour
 {
 
 	[SerializeField]
-	int spawnRate;
-	const int initialSpawnRate = 3;
+	float spawnRate;
+	const float initialSpawnRate = 5.0f;
 
 
     [SerializeField]
@@ -61,10 +61,7 @@ public class Gamemode : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
-
-    }
+	void Update(){}
 
     void SpawnLighthouse()
     {
@@ -137,7 +134,10 @@ public class Gamemode : MonoBehaviour
 			} else {
 				SpawnShip (Spawn5);
 			}
-				
+
+			if(spawnRate > 1.0f) {
+				spawnRate -= 0.15f;
+			}
 
 			yield return new WaitForSeconds (spawnRate);
 		}
