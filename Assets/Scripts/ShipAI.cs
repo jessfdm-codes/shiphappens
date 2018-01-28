@@ -99,6 +99,16 @@ public class ShipAI : MonoBehaviour
 
     }
 
+    IEnumerator SuccessFlag()
+    {
+        speechBubbleRenderer.sprite = speechBubbleGreen;
+        yield return new WaitForSeconds(0.5f);
+        foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
+        {
+            sr.enabled = false;
+        }
+    }
+
     void ResolveGesture()
     {
         //Remove the head of the required flags
@@ -107,10 +117,7 @@ public class ShipAI : MonoBehaviour
         //If there's no flags left then you're solved
 		if (flagsRequired.Count == 0) {
 			solved = true;
-            foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
-            {
-                sr.enabled = false;
-            }
+            StartCoroutine(SuccessFlag());
             controller.IncrementScore();
 		} else {
             StartCoroutine(UpdateFlag());
