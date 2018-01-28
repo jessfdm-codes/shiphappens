@@ -8,25 +8,26 @@ public class ShipAI : MonoBehaviour
     Gamemode controller;
     bool solved, rotated;
     float speed;
+    [SerializeField]
 	List<SemaphoreGestureTarget> flagsRequired;
     GameObject shipEater;
+    [SerializeField]
+    string curr;
 
+    [SerializeField]
 	private Sprite speechBubbleWhite;
-	private Sprite speechBubbleGreen;
+    [SerializeField]
+    private Sprite speechBubbleGreen;
 
-	private SpriteRenderer iconRenderer;
-	private SpriteRenderer speechBubbleRenderer;
+    [SerializeField]
+    private SpriteRenderer iconRenderer;
+    [SerializeField]
+    private SpriteRenderer speechBubbleRenderer;
 
     // Use this for initialization
     void Start()
     {
         solved = false;
-        rotated = false;
-        controller = GameObject.Find("DefaultGamemode").GetComponent<Gamemode>();
-		speechBubbleWhite = Resources.Load<Sprite> ("SpeechBubble");
-		speechBubbleGreen = Resources.Load<Sprite> ("SpeechBubbleGreen");
-		iconRenderer = this.transform.Find ("Icon").GetComponent<SpriteRenderer> ();
-		speechBubbleRenderer = this.transform.Find ("SpeechBubble").GetComponent<SpriteRenderer> ();
     }
 
     // Update is called once per frame
@@ -65,11 +66,16 @@ public class ShipAI : MonoBehaviour
 
 	public void Initialize(float newSpeed, Transform destination, List<SemaphoreGestureTarget> requiredFlags)
     {
-		flagsRequired = requiredFlags;
+        controller = GameObject.Find("DefaultGamemode").GetComponent<Gamemode>();
+        speechBubbleWhite = Resources.Load<Sprite>("SpeechBubble");
+        speechBubbleGreen = Resources.Load<Sprite>("SpeechBubbleGreen");
+        iconRenderer = this.transform.Find("Icon").GetComponent<SpriteRenderer>();
+        speechBubbleRenderer = this.transform.Find("SpeechBubble").GetComponent<SpriteRenderer>();
+        flagsRequired = requiredFlags;
         speed = newSpeed;
         transform.LookAt(destination);
         shipEater = GameObject.Find("ShipEater");
-        UpdateFlag();
+        iconRenderer.sprite = flagsRequired[0].GetIcon();
     }
 
 
@@ -84,9 +90,10 @@ public class ShipAI : MonoBehaviour
 	IEnumerator UpdateFlag()
     {
 		speechBubbleRenderer.sprite = speechBubbleGreen;
-		WaitForSeconds (0.5f);
+        yield return new WaitForSeconds(0.5f);
 
 		iconRenderer.sprite = flagsRequired[0].GetIcon();
+        Debug.Log("g");
 		speechBubbleRenderer.sprite = speechBubbleWhite;
 		yield return null;
 
@@ -106,8 +113,8 @@ public class ShipAI : MonoBehaviour
             }
             controller.IncrementScore();
 		} else {
-			StartCoroutine(UpdateFlag ());
-		}
+            StartCoroutine(UpdateFlag());
+        }
     }
 
 
