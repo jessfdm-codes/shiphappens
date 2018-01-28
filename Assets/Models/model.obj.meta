@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 35631ce0bdfc3cf459ae86780d1b50eb
+guid: 310f98a56c483b74c8db61189660345a
 timeCreated: 1517091463
 licenseType: Free
 ModelImporter:
@@ -462,27 +462,7 @@ ModelImporter:
     4300170: mesh924519788
     4300172: mesh948550253
     4300174: mesh984816456
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat10
-    second: {fileID: 2100000, guid: e5288c27d3ee1f94487ffdbc517d1d5b, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat18
-    second: {fileID: 2100000, guid: 0a8f94d8e2f23444390793f353847c7d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat20
-    second: {fileID: 2100000, guid: 931f0084897af4e42b89a71d8fbe646d, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: mat9
-    second: {fileID: 2100000, guid: ce160f08da0197b48949a33bb6a0c97f, type: 2}
+  externalObjects: {}
   materials:
     importMaterials: 1
     materialName: 0
